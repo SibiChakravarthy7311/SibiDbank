@@ -153,6 +153,49 @@ class App extends Component {
 
                   </div>
                 </Tab>
+
+                <Tab eventKey="transfer" title="Transfer">
+                  <div>
+                  <br></br>
+                    Enter the account number and amount to transfer...
+                    <br></br>
+                    (min. amount is 0.01 ETH)
+                    <br></br>
+                    (1 transfer is possible at the time)
+                    <br></br>
+                    <form onSubmit={(e) => {
+                      e.preventDefault()
+
+                      let amount = this.transferAmount.value;
+                      amount = amount * 10**18 //convert to wei
+                      let account = this.accountNumber.value;
+                      this.deposit(amount)
+                    }}>
+                      <div className='form-group mr-sm-2'>
+                      <br></br>
+                        <input
+                            id='accountNumber'
+                            step="0.01"
+                            type='text'
+                            ref={(input) => { this.depositAmount = input }}
+                            className="form-control form-control-md"
+                            placeholder='Account Number'
+                            required />
+                        <input
+                          id='transferAmount'
+                          step="0.01"
+                          type='number'
+                          ref={(input) => { this.depositAmount = input }}
+                          className="form-control form-control-md"
+                          placeholder='Amount...'
+                          required />
+                      </div>
+                      <button type='submit' className='btn btn-primary'>DEPOSIT</button>
+                    </form>
+
+                  </div>
+                </Tab>
+
                 <Tab eventKey="withdraw" title="Withdraw">
                   <br></br>
                     Do you want to withdraw + take interest?
@@ -162,6 +205,7 @@ class App extends Component {
                     <button type='submit' className='btn btn-primary' onClick={(e) => this.withdraw(e)}>WITHDRAW</button>
                   </div>
                 </Tab>
+
                 <Tab eventKey="borrow" title="Borrow">
                   <div>
 
@@ -194,6 +238,7 @@ class App extends Component {
                     </form>
                   </div>
                 </Tab>
+
                 <Tab eventKey="payOff" title="Payoff">
                   <div>
 
@@ -206,6 +251,7 @@ class App extends Component {
                     <button type='submit' className='btn btn-primary' onClick={(e) => this.payOff(e)}>PAYOFF</button>
                   </div>
                 </Tab>
+                
               </Tabs>
               </div>
             </main>
