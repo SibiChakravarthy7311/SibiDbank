@@ -1,0 +1,14 @@
+.fundraiser{
+    transform: translateY(-2%);
+}
+
+#owner{
+    transform: translateX(15%);
+}
+
+.gradeCalculation{
+    display: flex;
+    justify-content: center;
+    transform: translateY(30%);
+    flex-direction: column;
+}
