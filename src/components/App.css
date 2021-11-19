@@ -1,1 +1,22 @@
 /* Styles go here */
+.Account{
+    display: flex;
+    justify-content: center;
+}
+
+.balance{
+    display: flex;
+    justify-content: center;
+    flex: 0.2;
+}
+
+.interest{
+    display: flex;
+    justify-content: center;
+    flex: 0.2;
+}
+
+.debt{
+    display: flex;
+    justify-content: center;
+}
