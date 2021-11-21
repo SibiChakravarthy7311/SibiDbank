@@ -2,8 +2,31 @@ import React, { Component } from "react";
 import Identicon from "identicon.js";
 import Web3 from "web3";
 import "./Main.css";
+import ether from "../ether.png";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+
 
 class Main extends Component {
+
+  changeNFTVisibility() {
+    var visibility = this.state.displayNFTs;
+    if(visibility){
+      this.setState({ displayNFTs: !visibility, NFTButtonText: "Show NFTs"});
+    }
+    else{
+      this.setState({ displayNFTs: !visibility, NFTButtonText: "Hide NFTs"});
+    }
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      displayNFTs: true,
+      NFTButtonText: "Hide NFTs"
+    };
+  }
+
   render() {
     const web3 = new Web3(window.ethereum);
     const nftData = (
@@ -11,7 +34,7 @@ class Main extends Component {
         <p>&nbsp;</p>
         {this.props.images.map((image, key) => {
           return (
-            <div className="card mb-4" key={key}>
+            <div className="card mb-4 NFT" key={key}>
               <div className="card-header">
                 <img
                   className="mr-2"
@@ -85,13 +108,32 @@ class Main extends Component {
                   }}
                 >
                   <input
+                    id="fileInput"
                     type="file"
                     accept=".jpg, .jpeg, .png, .bmp, .gif"
                     onChange={this.props.captureFile}
                   />
-                  <div className="gradeCalculation">
-                    <div className="imageWorth">
-                      Estimated Ether Worth:<p>{this.props.grade}</p>
+                  <br></br>
+                  <br></br>
+                  <div className="ether">
+                    <div className="etherBox">
+                      <div className="etherTag">
+                        Estimated Ether Worth
+                      </div>
+                      <div className="etherValue">
+                        &nbsp;{this.props.grade}
+                      </div>
+                      <div className="etherSymbol">
+                        &nbsp;
+                        <img
+                          src={ether}
+                          width="25"
+                          height="25"
+                          className="d-inline-block"
+                          alt="Decentralized Bank"
+                        />
+                        &nbsp;
+                      </div>
                     </div>
                   </div>
                   <div className="form-group mr-sm-2">
@@ -109,22 +151,37 @@ class Main extends Component {
                   </div>
                   <button
                     type="submit"
-                    className="btn btn-primary btn-block btn-lg"
+                    className="btn btn-primary btn-block"
                   >
-                    Upload!
+                    Upload
                   </button>
                 </form>
-                <button
+
+                <br></br>
+                <br></br>
+
+                <div className="NFTViewSwitcher"
                   onClick={(event) => {
-                    this.props.changeNFTVisibility();
+                    this.changeNFTVisibility();
                   }}
                 >
-                  Change NFT Visibility
-                </button>
+                  <div className="NFTViewSwitcherButton">
+                  {this.state.NFTButtonText}&nbsp;&nbsp;
+                    <div className="NFTViewSwitchIcon">
+                      {
+                        this.state.displayNFTs ?
+                        <KeyboardArrowUpIcon />
+                        :
+                        <KeyboardArrowDownIcon />
+                      }
+                    </div>
+                  </div>
+                </div>
 
                 {
-                  this.props.displayNFTs ?
-                  nftData :
+                  this.state.displayNFTs ?
+                  nftData 
+                  :
                   <div></div>
                 }
               </div>

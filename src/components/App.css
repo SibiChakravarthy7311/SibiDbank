@@ -1,19 +1,99 @@
 /* Styles go here */
+.bankContainer{
+    display: flex;
+    justify-content: center;
+}
+
+.mainContainer{
+    position: absolute;
+    top: 15%;
+    border-radius: 10px;
+    background-color: rgba(159, 159, 240, 0.3);
+    padding: 2%;
+}
+
 .Account{
     display: flex;
     justify-content: center;
 }
 
-.balance{
+.ether{
     display: flex;
     justify-content: center;
-    flex: 0.2;
+    align-items: center;
+    flex: 0.5;
 }
 
-.interest{
+.etherBox{
+    display: flex;
+    background-color: aliceblue;
+    border-radius: 10px;
+}
+
+.etherTag{
+    background-color: #0f8ddb;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 10px;
+    padding-right: 4px;
+    color: white;
+}
+
+.etherValue{
+    display: flex;
+    align-items: center;
+    min-width: 100px;
+    align-items: center;
+    color: black;
+}
+
+.etherSymbol{
+    display: flex;
+    align-items: center;
+}
+
+.token{
     display: flex;
     justify-content: center;
-    flex: 0.2;
+    align-items: center;
+    flex: 0.5;
+}
+
+.tokenBox{
+    display: flex;
+    background-color: aliceblue;
+    border-radius: 10px;
+}
+
+.tokenTag{
+    background-color:  #0f8ddb;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 10px;
+    padding-right: 4px;
+    color: white;
+}
+
+.tokenValue{
+    display: flex;
+    align-items: center;
+    min-width: 100px;
+    align-items: center;
+    color: black;
+}
+
+.tokenSymbol{
+    display: flex;
+    align-items: center;
+    color: black;
+}
+
+.tokenSymbol img{
+    border-radius: 50%;
 }
 
 .debtDetails{
@@ -33,6 +113,73 @@
     justify-content: center;
 }
 
+h1{
+    color: white;
+}
+
 #image{
     display: none;
+}
+
+.tab{
+    color: aliceblue;
+}
+
+.tabT{
+    color: aliceblue;
+}
+
+.tabT:hover{
+    color: aliceblue;
+}
+
+.tabT:active,
+.tabT:focus{
+    color: #0d47a1;
+}
+
+
+
+.bankNameContainer{
+    display: flex;
+    justify-content: center;
+}
+
+.bankNameContainerBox{
+    display: flex;
+    height: 103px;
+    border: aliceblue solid 3px;
+}
+
+.bankImage{
+    background-color: green;
+    height: 100px;
+}
+
+.bankImage img{
+    width: 90px;
+    height: 100px;
+    display: block;
+}
+
+.bankBrandContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bankBrand h1{
+    font-size: 64px;
+}
+
+.bankName{
+    transform: translateY(-40%);
+    display: flex;
+    color: aliceblue;
+}
+
+.amountInput{
+    display: flex;
+    background-color: white;
+    border-radius: 10px;
 }
