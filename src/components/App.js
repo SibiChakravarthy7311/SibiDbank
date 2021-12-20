@@ -79,7 +79,7 @@ class App extends Component {
         });
       } catch (e) {
         console.log("Error", e);
-        window.alert("Error loading contract data");
+        // window.alert("Error loading contract data");
       }
 
       // load image data
@@ -95,7 +95,7 @@ class App extends Component {
         }
       } catch (e) {
         console.log("Error", e);
-        window.alert("Error loading Image data");
+        // window.alert("Error loading Image data");
       }
 
       this.setState({ loading: false });
@@ -453,7 +453,7 @@ class App extends Component {
                   <div className="content mr-auto ml-auto">
                     <Tabs
                       tabClassName="tabs"
-                      defaultActiveKey="fundraiser"
+                      defaultActiveKey="deposit"
                       id="uncontrolled-tab-example"
                     >
                       <Tab tabClassName="tabT" eventKey="deposit" title="Deposit">

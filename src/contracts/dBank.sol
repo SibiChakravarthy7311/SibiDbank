@@ -88,6 +88,10 @@ contract dBank {
     depositStart[msg.sender] = block.timestamp;
     etherBalanceOf[msg.sender] = etherBalanceOf[msg.sender] - amount;
 
+    if(etherBalanceOf[msg.sender] == 0){
+      depositStart[msg.sender] = block.timestamp;
+    }
+
     emit Withdraw(msg.sender, amount, depositTime, interest);
   }
 
@@ -113,6 +117,10 @@ contract dBank {
     etherBalanceOf[receiver] += amount;
     depositStart[msg.sender] = depositStart[msg.sender] + block.timestamp;
     depositStart[receiver] = depositStart[receiver] + block.timestamp;
+
+    if(etherBalanceOf[msg.sender] == 0){
+      depositStart[msg.sender] = block.timestamp;
+    }
 
     emit Transfer(msg.sender, amount, receiver);
   }
