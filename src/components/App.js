@@ -371,8 +371,8 @@ class App extends Component {
     this.creditInterest();
     return (
       <div className="container">
-        <div style={{ position: "absolute" }}>
-          <ParticleSettings />
+        <div className="backWall" style={{ position: "absolute" }}>
+          {/* <ParticleSettings /> */}
         </div>
         <div className="text-monospace">
           <Navbar account={this.state.account} />
@@ -381,22 +381,22 @@ class App extends Component {
               <br></br>
               <div className="bankNameContainer">
                 <div className="bankNameContainerBox">
-                  <div className="bankImage">
+                  {/* <div className="bankImage">
                     <img
                       src={bank}
                       className="d-inline-block align-top"
                       alt="Sibi's Decentralized Bank"
                     />
-                  </div>
+                  </div> */}
                   <div className="referenceDiv">
 
                   </div>
                   <div className="bankBrandContainer">
                     <div className="bankBrand">
-                      <h1>SD₿</h1>
+                      <h1>CD₿</h1>
                     </div>
                     <div className="bankName">
-                      <h6>&nbsp;Sibi's Decentralized ₿ank&nbsp;</h6>
+                      <h6>&nbsp;Catena Decentralized ₿ank&nbsp;</h6>
                     </div>
                   </div>
                 </div>
@@ -780,7 +780,7 @@ class App extends Component {
                           <br></br>
                           Deposit an NFT for fundraising
                           <br></br>
-                          (You'll get 50% of calculated NFT value in Tokens,
+                          (You'll get Tokens equivalent to the calculated NFT value,
                           <br></br>
                           and your NFT will be posted for fundraising)
                           <img src={this.state.source} id="image" alt="" />

@@ -75,7 +75,7 @@
     padding-bottom: 4px;
     padding-left: 10px;
     padding-right: 4px;
-    color: white;
+    color: black;
 }
 
 .tokenValue{
@@ -114,7 +114,7 @@
 }
 
 h1{
-    color: white;
+    color: black;
 }
 
 #image{
@@ -122,15 +122,15 @@ h1{
 }
 
 .tab{
-    color: aliceblue;
+    color: black;
 }
 
 .tabT{
-    color: aliceblue;
+    color: black;
 }
 
 .tabT:hover{
-    color: aliceblue;
+    color: black;
 }
 
 .tabT:active,
@@ -148,7 +148,7 @@ h1{
 .bankNameContainerBox{
     display: flex;
     height: 103px;
-    border: aliceblue solid 3px;
+    border: black solid 3px;
 }
 
 .bankImage{
@@ -175,11 +175,18 @@ h1{
 .bankName{
     transform: translateY(-40%);
     display: flex;
-    color: aliceblue;
+    color: black;
 }
 
 .amountInput{
     display: flex;
-    background-color: white;
+    background-color: black;
     border-radius: 10px;
+}
+
+.backWall{
+    transform: translateX(-14%);
+    width: 100vw;
+    height: 1000px;
+    background-color : #0d47a1;
 }

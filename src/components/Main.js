@@ -47,6 +47,7 @@ class Main extends Component {
                   ).toString()}`}
                 />
                 <small className="text-muted">{image.author}</small>
+                {/* <small className="text-muted">{image.hash}</small> */}
               </div>
               <ul id="imageList" className="list-group list-group-flush">
                 <li className="list-group-item">
