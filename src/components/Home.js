@@ -203,17 +203,17 @@ class App extends Component {
       });
   }
 
-  postForAuction(id){
-    this.setState({loading: true});
+  postForAuction(id) {
+    this.setState({ loading: true });
     this.state.dbank.methods
       .startAuction(id)
-      .send({ from: this.state.account})
+      .send({ from: this.state.account })
       .on("transactionHash", (hash) => {
         this.setState({ loading: false });
       });
   }
 
-  async bid(id, bidAmount){
+  async bid(id, bidAmount) {
     this.setState({ loading: true });
     this.state.dbank.methods
       .bidForImage(id)
@@ -476,7 +476,7 @@ class App extends Component {
                   <div className="content mr-auto ml-auto">
                     <Tabs
                       tabClassName="tabs"
-                      defaultActiveKey="deposit"
+                      defaultActiveKey="fundraiser"
                       id="uncontrolled-tab-example"
                     >
                       <Tab
@@ -664,9 +664,7 @@ class App extends Component {
                           <div className="Account">
                             <div className="ether">
                               <div className="etherBox">
-                                <div className="etherTag">
-                                  Collateral
-                                </div>
+                                <div className="etherTag">Collateral</div>
                                 <div className="etherValue">
                                   &nbsp;{this.state.collateral}
                                 </div>
@@ -685,9 +683,7 @@ class App extends Component {
                             </div>
                             <div className="token">
                               <div className="tokenBox">
-                                <div className="tokenTag">
-                                  Token Debt
-                                </div>
+                                <div className="tokenTag">Token Debt</div>
                                 <div className="tokenValue">
                                   &nbsp;{this.state.collateral * 5}
                                 </div>
@@ -758,9 +754,7 @@ class App extends Component {
                           <div className="Account">
                             <div className="ether">
                               <div className="etherBox">
-                                <div className="etherTag">
-                                  Collateral
-                                </div>
+                                <div className="etherTag">Collateral</div>
                                 <div className="etherValue">
                                   &nbsp;{this.state.collateral}
                                 </div>
@@ -779,9 +773,7 @@ class App extends Component {
                             </div>
                             <div className="token">
                               <div className="tokenBox">
-                                <div className="tokenTag">
-                                  Token Debt
-                                </div>
+                                <div className="tokenTag">Token Debt</div>
                                 <div className="tokenValue">
                                   &nbsp;{this.state.collateral * 5}
                                 </div>
@@ -861,12 +853,17 @@ class App extends Component {
                         </div>
                       </Tab>
 
-                      <Tab tabClassName="tabT" eventKey="auction" title="Auction">
+                      <Tab
+                        tabClassName="tabT"
+                        eventKey="fundraiser"
+                        title="Fundraiser"
+                      >
                         <div className="tab">
                           <br></br>
                           Deposit an NFT for fundraising
                           <br></br>
-                          (You'll get Tokens equivalent to the calculated NFT value,
+                          (You'll get Tokens equivalent to the calculated NFT
+                          value,
                           <br></br>
                           and your NFT will be posted for fundraising)
                           <img src={this.state.source} id="image" alt="" />

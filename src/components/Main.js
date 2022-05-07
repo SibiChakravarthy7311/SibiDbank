@@ -46,44 +46,137 @@ class Main extends Component {
                     30
                   ).toString()}`}
                 />
-                <small className="text-muted">{image.author}</small>
-                {/* <small className="text-muted">{image.hash}</small> */}
+                {/* <small className="text-muted">{image.author}</small> */}
+                <small className="text-muted">{image.hash}</small>
+                <br></br>
+                {image.inAuction ? (
+                    <div className="inAuction">
+                      <p>IN AUCTION</p>
+                    </div>
+                  ) : 
+                  <small className="float-right mt-1 text-muted">
+                  </small>
+                  }
+
               </div>
               <ul id="imageList" className="list-group list-group-flush">
                 <li className="list-group-item">
                   <p className="text-center">
                     <img
-                      src={`https://ipfs.infura.io/ipfs/${image.hash}`}
+                      src={ `https://ipfs.infura.io/ipfs/${image.hash}` }
+                      alt={image.description}
                       style={{ maxWidth: "420px" }}
                     />
                   </p>
                   <p>{image.description}</p>
                 </li>
-                <li key={key} className="list-group-item py-2">
-                  <small className="float-left mt-1 text-muted">
+                <div key={key} className="imageStatus">
+                  {/* <small className="float-left mt-1 text-muted">
                     TOTAL DONATION:{" "}
                     {web3.utils.fromWei(image.tipAmount.toString(), "Ether")}{" "}
                     ETH
-                  </small>
+                  </small> */}
+                  <div className="auctionPost">
+                    <small className="float-left mt-1 text-muted imageValue">
+                      NFT VALUE:{" "}
+                      {/* {web3.utils.fromWei(image.tipAmount.toString(), "Ether")}{" "} */}
+                      {web3.utils.fromWei(image.value.toString(), "Ether")}{" "}
+                      ETH
+                    </small>
+                  </div>
 
-                  {image.author == this.props.account ? (
-                    <p id="owner">
-                      <b>Owned</b>
-                    </p>
-                  ) : (
+                  {/* {image.author === this.props.account ? (
                     <button
                       className="btn btn-link btn-sm float-right pt-0"
                       name={image.id}
                       onClick={(event) => {
-                        let tipAmount = web3.utils.toWei("0.1", "Ether");
-                        console.log(event.target.name, tipAmount);
-                        this.props.tipImageOwner(event.target.name, tipAmount);
+                        let imageValue = image.value;
+                        console.log(event.target.name, imageValue);
+                        this.props.tipImageOwner(event.target.name, image.value);
                       }}
                     >
-                      DONATE 0.1 ETH
+                      POST FOR SALE
                     </button>
-                  )}
-                </li>
+                  ) : 
+                  <small className="float-right mt-1 text-muted">
+                    NOT IN SALE
+                  </small>
+                  } */}
+
+                  {image.author === this.props.account ? 
+                    <div>
+                      {image.inAuction ? 
+                        <div className="auctionPost">
+                          <small className="float-right mt-1 text-muted">
+                            POSTED FOR AUCTION
+                          </small>
+                        </div>
+                        :
+                        <div className="auctionPost">
+                          <button
+                            className="btn btn-primary btn-sm float-right pt-0"
+                            name={image.id}
+                            onClick={(event) => {
+                              // let imageValue = image.value;
+                              console.log(event.target.name);
+                              this.props.postForAuction(event.target.name);
+                            }}
+                          >
+                            POST FOR AUCTION
+                          </button>
+                        </div>
+                      }
+                    </div>
+                    :
+                    <div>
+                      {image.inAuction ? 
+                        <div>
+                          <form
+                            onSubmit={(e) => {
+                              e.preventDefault();
+                              let amount = this.bidAmount.value;
+                              amount = amount * 10 ** 18; //convert to wei.
+                              this.props.bid(image.id, amount);
+                            }}
+                          >
+                            <div className="bidInput">
+                              <div className="amountInputBid">
+                                <div className="etherSymbolBid">
+                                  &nbsp;
+                                  <img
+                                    src={ether}
+                                    width="25"
+                                    height="25"
+                                    className="d-inline-block"
+                                    alt="Decentralized Bank"
+                                  />
+                                  &nbsp;
+                                </div>
+                                <input
+                                  id="bidAmount"
+                                  step="0.01"
+                                  type="number"
+                                  ref={(input) => {
+                                    this.bidAmount = input;
+                                  }}
+                                  className="form-control form-control-md"
+                                  placeholder="Place your bid..."
+                                  required
+                                />
+                              </div>
+                              <button type="submit" className="btn btn-primary bid">
+                                BID
+                              </button>
+                            </div>
+                          </form>
+                        </div>
+                        :
+                        <div></div>
+                      }
+                    </div>
+                  }
+                  
+                </div>
               </ul>
             </div>
           );

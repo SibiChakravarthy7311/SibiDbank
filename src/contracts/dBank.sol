@@ -4,172 +4,261 @@ pragma solidity >=0.6.0 <0.8.0;
 import "./Token.sol";
 
 contract dBank {
+    Token private token;
 
-  Token private token;
+    mapping(address => uint256) public depositStart;
+    mapping(address => uint256) public etherBalanceOf;
+    mapping(address => uint256) public collateralEther;
 
-  mapping(address => uint) public depositStart;
-  mapping(address => uint) public etherBalanceOf;
-  mapping(address => uint) public collateralEther;
+    mapping(address => bool) public isDeposited;
+    mapping(address => bool) public isBorrowed;
 
-  mapping(address => bool) public isDeposited;
-  mapping(address => bool) public isBorrowed;
+    event Deposit(address indexed user, uint256 etherAmount, uint256 timeStart);
+    event Withdraw(
+        address indexed user,
+        uint256 etherAmount,
+        uint256 depositTime,
+        uint256 interest
+    );
+    event Transfer(address indexed user, uint256 amount, address receiver);
+    event Borrow(
+        address indexed user,
+        uint256 collateralEtherAmount,
+        uint256 borrowedTokenAmount
+    );
+    event PayOff(address indexed user, uint256 fee);
 
-  event Deposit(address indexed user, uint etherAmount, uint timeStart);
-  event Withdraw(address indexed user, uint etherAmount, uint depositTime, uint interest);
-  event Transfer(address indexed user, uint amount, address receiver);
-  event Borrow(address indexed user, uint collateralEtherAmount, uint borrowedTokenAmount);
-  event PayOff(address indexed user, uint fee);
+    uint256 public imageCount;
 
-  uint public imageCount;
-  
-  struct Image{
-    uint id;
-    string hash;
-    string description;
-    uint tipAmount;
-    address payable author;
-  }
-
-  event ImageCreated(
-    uint id,
-    string hash,
-    string description,
-    uint tipAmount,
-    address payable author
-  );
-
-  event ImageTipped(
-    uint id,
-    string hash,
-    string description,
-    uint tipAmount,
-    address payable author
-  );
-
-  // Store Images
-  mapping(uint => Image) public images;
-
-  constructor(Token _token) public {
-    token = _token;
-  }
-
-  function deposit() payable public {
-    // require(isDeposited[msg.sender] == false, 'Error, deposit already active');
-    require(msg.value>=1e16, 'Error, deposit must be >= 0.01 ETH');
-
-    if(etherBalanceOf[msg.sender] > 0){
-      uint depositTime = block.timestamp - depositStart[msg.sender];
-      uint interestPerSecond = 316680170 * (etherBalanceOf[msg.sender] / 1e16);
-      uint interest = interestPerSecond * depositTime;
-      depositStart[msg.sender] = 0;
-      token.mint(msg.sender, interest); //interest to user
+    struct Image {
+        uint256 id;
+        string hash;
+        string description;
+        uint256 tipAmount;
+        address payable author;
+        uint256 value;
+        address payable lastBidder;
+        uint256 endTime;
+        bool inAuction;
     }
 
-    etherBalanceOf[msg.sender] = etherBalanceOf[msg.sender] + msg.value;
-    depositStart[msg.sender] = depositStart[msg.sender] + block.timestamp;
+    event ImageCreated(
+        uint256 id,
+        string hash,
+        string description,
+        uint256 tipAmount,
+        address payable author
+    );
 
-    isDeposited[msg.sender] = true; //activate deposit status
-    emit Deposit(msg.sender, msg.value, block.timestamp);
-  }
+    event ImageTipped(
+        uint256 id,
+        string hash,
+        string description,
+        uint256 tipAmount,
+        address payable author
+    );
 
-  function withdraw(uint amount) public {
-    // require(isDeposited[msg.sender]==true, 'Error, no previous deposit');
-    require(etherBalanceOf[msg.sender] >= amount, 'Account balance is 0');
-    uint userBalance = etherBalanceOf[msg.sender]; //for event
+    // Store Images
+    mapping(uint256 => Image) public images;
 
-    //check user's hodl time
-    uint depositTime = block.timestamp - depositStart[msg.sender];
-    uint interestPerSecond = 31668017 * (etherBalanceOf[msg.sender] / 1e16);
-    uint interest = interestPerSecond * depositTime;
-
-    msg.sender.transfer(amount); //eth back to user
-    token.mint(msg.sender, interest); //interest to user
-
-    depositStart[msg.sender] = block.timestamp;
-    etherBalanceOf[msg.sender] = etherBalanceOf[msg.sender] - amount;
-
-    if(etherBalanceOf[msg.sender] == 0){
-      depositStart[msg.sender] = block.timestamp;
+    constructor(Token _token) public {
+        token = _token;
     }
 
-    emit Withdraw(msg.sender, amount, depositTime, interest);
-  }
+    function deposit() public payable {
+        // require(isDeposited[msg.sender] == false, 'Error, deposit already active');
+        require(msg.value >= 1e16, "Error, deposit must be >= 0.01 ETH");
 
-  function transfer(uint amount, address receiver) public{
-    require(etherBalanceOf[msg.sender] >= amount, "Error, insufficient funds");
-    require(receiver != address(0x0), "Invalid receiver address");
+        if (etherBalanceOf[msg.sender] > 0) {
+            uint256 depositTime = block.timestamp - depositStart[msg.sender];
+            uint256 interestPerSecond = 316680170 *
+                (etherBalanceOf[msg.sender] / 1e16);
+            uint256 interest = interestPerSecond * depositTime;
+            depositStart[msg.sender] = 0;
+            token.mint(msg.sender, interest); //interest to user
+        }
 
-    uint depositTime = block.timestamp - depositStart[msg.sender];
-    uint interestPerSecond = 316680170 * (etherBalanceOf[msg.sender] / 1e16);
-    uint interest = interestPerSecond * depositTime;
-    token.mint(msg.sender, interest);
-    depositStart[msg.sender] = 0;
+        etherBalanceOf[msg.sender] = etherBalanceOf[msg.sender] + msg.value;
+        depositStart[msg.sender] = depositStart[msg.sender] + block.timestamp;
 
-    if(etherBalanceOf[receiver] > 0){
-      depositTime = block.timestamp - depositStart[receiver];
-      interestPerSecond = 316680170 * (etherBalanceOf[receiver] / 1e16);
-      interest = interestPerSecond * depositTime;
-      depositStart[receiver] = 0;
-      token.mint(receiver, interest); //interest to user
+        isDeposited[msg.sender] = true; //activate deposit status
+        emit Deposit(msg.sender, msg.value, block.timestamp);
     }
 
-    etherBalanceOf[msg.sender] -= amount;
-    etherBalanceOf[receiver] += amount;
-    depositStart[msg.sender] = depositStart[msg.sender] + block.timestamp;
-    depositStart[receiver] = depositStart[receiver] + block.timestamp;
+    function withdraw(uint256 amount) public {
+        // require(isDeposited[msg.sender]==true, 'Error, no previous deposit');
+        require(etherBalanceOf[msg.sender] >= amount, "Account balance is 0");
+        uint256 userBalance = etherBalanceOf[msg.sender]; //for event
 
-    if(etherBalanceOf[msg.sender] == 0){
-      depositStart[msg.sender] = block.timestamp;
+        //check user's hodl time
+        uint256 depositTime = block.timestamp - depositStart[msg.sender];
+        uint256 interestPerSecond = 31668017 *
+            (etherBalanceOf[msg.sender] / 1e16);
+        uint256 interest = interestPerSecond * depositTime;
+
+        msg.sender.transfer(amount); //eth back to user
+        token.mint(msg.sender, interest); //interest to user
+
+        depositStart[msg.sender] = block.timestamp;
+        etherBalanceOf[msg.sender] = etherBalanceOf[msg.sender] - amount;
+
+        if (etherBalanceOf[msg.sender] == 0) {
+            depositStart[msg.sender] = block.timestamp;
+        }
+
+        emit Withdraw(msg.sender, amount, depositTime, interest);
     }
 
-    emit Transfer(msg.sender, amount, receiver);
-  }
+    function transfer(uint256 amount, address receiver) public {
+        require(
+            etherBalanceOf[msg.sender] >= amount,
+            "Error, insufficient funds"
+        );
+        require(receiver != address(0x0), "Invalid receiver address");
 
-  function borrow() payable public {
-    require(msg.value>=1e16, 'Error, collateral must be >= 0.01 ETH');
+        uint256 depositTime = block.timestamp - depositStart[msg.sender];
+        uint256 interestPerSecond = 316680170 *
+            (etherBalanceOf[msg.sender] / 1e16);
+        uint256 interest = interestPerSecond * depositTime;
+        token.mint(msg.sender, interest);
+        depositStart[msg.sender] = 0;
 
-    collateralEther[msg.sender] = collateralEther[msg.sender] + msg.value;
-    uint tokensToMint = msg.value / 2;
-    token.mint(msg.sender, tokensToMint);
+        if (etherBalanceOf[receiver] > 0) {
+            depositTime = block.timestamp - depositStart[receiver];
+            interestPerSecond = 316680170 * (etherBalanceOf[receiver] / 1e16);
+            interest = interestPerSecond * depositTime;
+            depositStart[receiver] = 0;
+            token.mint(receiver, interest); //interest to user
+        }
 
-    emit Borrow(msg.sender, collateralEther[msg.sender], tokensToMint);
-  }
+        etherBalanceOf[msg.sender] -= amount;
+        etherBalanceOf[receiver] += amount;
+        depositStart[msg.sender] = depositStart[msg.sender] + block.timestamp;
+        depositStart[receiver] = depositStart[receiver] + block.timestamp;
 
-  function payOff() public {
-    require(collateralEther[msg.sender] > 0, "Error, no active loans");
-    require(token.transferFrom(msg.sender, address(this), collateralEther[msg.sender]/2), "Error, can't receive tokens"); //must approve dBank 1st
+        if (etherBalanceOf[msg.sender] == 0) {
+            depositStart[msg.sender] = block.timestamp;
+        }
 
-    uint fee = collateralEther[msg.sender]/10; //calc 10% fee
+        emit Transfer(msg.sender, amount, receiver);
+    }
 
-    msg.sender.transfer(collateralEther[msg.sender]-fee);
-    collateralEther[msg.sender] = 0;
+    function borrow() public payable {
+        require(msg.value >= 1e16, "Error, collateral must be >= 0.01 ETH");
 
-    emit PayOff(msg.sender, fee);
-  }
+        collateralEther[msg.sender] = collateralEther[msg.sender] + msg.value;
+        uint256 tokensToMint = msg.value * 5;
+        token.mint(msg.sender, tokensToMint);
 
-  function uploadImage(string memory _imageHash, string memory _description, uint value) public{
-    require(bytes(_imageHash).length > 0, "Image cannot be empty");
-    require(bytes(_description).length > 0, "Description is required");
+        emit Borrow(msg.sender, collateralEther[msg.sender], tokensToMint);
+    }
 
-    require(msg.sender != address(0x0), "Invalid sender");
+    function swap() public payable {
+        // require(msg.value>=1e17, 'Error, Ether to swap must be >= 0.1 ETH');
 
-    imageCount++;
-    images[imageCount] = Image(imageCount, _imageHash, _description, 0, msg.sender);
-    token.mint(msg.sender, value);
-    emit ImageCreated(imageCount, _imageHash, _description, 0, msg.sender);
-    
-  }
-  
-  // Tip Images
-  function tipImageOwner(uint _id) public payable{
-    require(_id > 0 && _id <= imageCount);
+        // collateralEther[msg.sender] = collateralEther[msg.sender] + msg.value;
+        uint256 tokensToMint = msg.value * 10;
+        token.mint(msg.sender, tokensToMint);
 
-    Image memory _image = images[_id];
-    address payable _author = _image.author;
-    _author.transfer(msg.value);
-    _image.tipAmount = _image.tipAmount + msg.value;
-    images[_id] = _image;
+        // emit Borrow(msg.sender, collateralEther[msg.sender], tokensToMint);
+    }
 
-    emit ImageTipped(_id, _image.hash, _image.description, _image.tipAmount, _author);
-  }
+    function payOff() public {
+        require(collateralEther[msg.sender] > 0, "Error, no active loans");
+        require(
+            token.transferFrom(
+                msg.sender,
+                address(this),
+                collateralEther[msg.sender] * 5
+            ),
+            "Error, can't receive tokens"
+        ); //must approve dBank 1st
+
+        uint256 fee = collateralEther[msg.sender] / 100; //calc 1% fee
+
+        msg.sender.transfer(collateralEther[msg.sender] - fee);
+        collateralEther[msg.sender] = 0;
+
+        emit PayOff(msg.sender, fee);
+    }
+
+    function startAuction(uint256 _id) public {
+        require(_id > 0 && _id <= imageCount);
+        Image memory _image = images[_id];
+        require(_image.inAuction == false, "Image already in auction");
+        require(_image.author == msg.sender);
+        _image.inAuction = true;
+        _image.endTime = block.timestamp + 1 * 60;
+        images[_id] = _image;
+    }
+
+    function bidForImage(uint256 _id) public payable {
+        Image memory _image = images[_id];
+        if (_image.endTime < block.timestamp) {
+            if (_image.lastBidder != address(0x0)) {
+                _image.author.transfer(_image.value);
+                _image.author = _image.lastBidder;
+            }
+            _image.lastBidder = address(0x0);
+            _image.inAuction = false;
+            images[_id] = _image;
+            msg.sender.transfer(msg.value);
+            return;
+        }
+        if (msg.value <= _image.value) {
+            msg.sender.transfer(msg.value);
+            return;
+        }
+        if (_image.lastBidder != address(0x0)) {
+            _image.lastBidder.transfer(_image.value);
+        }
+        _image.lastBidder = msg.sender;
+        _image.value = msg.value;
+        images[_id] = _image;
+    }
+
+    function uploadImage(
+        string memory _imageHash,
+        string memory _description,
+        uint256 value
+    ) public {
+        require(bytes(_imageHash).length > 0, "Image cannot be empty");
+        require(bytes(_description).length > 0, "Description is required");
+
+        require(msg.sender != address(0x0), "Invalid sender");
+
+        imageCount++;
+        images[imageCount] = Image(
+            imageCount,
+            _imageHash,
+            _description,
+            0,
+            msg.sender,
+            value,
+            address(0x0),
+            block.timestamp,
+            false
+        );
+        token.mint(msg.sender, value);
+        emit ImageCreated(imageCount, _imageHash, _description, 0, msg.sender);
+    }
+
+    // Tip Images
+    function tipImageOwner(uint256 _id) public payable {
+        require(_id > 0 && _id <= imageCount);
+
+        Image memory _image = images[_id];
+        address payable _author = _image.author;
+        _author.transfer(msg.value);
+        _image.tipAmount = _image.tipAmount + msg.value;
+        images[_id] = _image;
+
+        emit ImageTipped(
+            _id,
+            _image.hash,
+            _image.description,
+            _image.tipAmount,
+            _author
+        );
+    }
 }

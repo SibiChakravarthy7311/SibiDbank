@@ -7,7 +7,7 @@ class ParticleSettings extends Component {
         return(
             <div>
                 <Particles
-                height='1000px' width='100vw'
+                height='100vh' width='100vw'
                 id = 'tsparticles'
                 options={
                     {

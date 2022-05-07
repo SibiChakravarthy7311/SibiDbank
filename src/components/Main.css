@@ -53,3 +53,46 @@
     border-radius: 10px;
     padding: 1%;
 }
+
+.inAuction p{
+    color: green;
+    display: inline;
+}
+
+.imageValue{
+    float: left;
+    padding: 4%;
+}
+
+.bidInput{
+    margin-top: 1%;
+    display: flex;
+}
+
+.amountInputBid{
+    display: flex;
+    float: right;
+    background-color: aliceblue;
+    border-radius: 10px;
+    width: 55%;
+}
+
+.auctionPost{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auctionPost button{
+    margin-bottom: 2%;
+}
+
+.bid{
+    float: left;
+    width: 45%;
+}
+
+.etherSymbolBid{
+    display: flex;
+    align-items: center;
+}
