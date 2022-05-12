@@ -7,9 +7,7 @@ import Web3 from "web3";
 import "./App.css";
 import Main from "./Main";
 import * as ml5 from "ml5";
-import ParticleSettings from "./ParticleSettings.js";
-import Navbar from "./Navbar.js";
-import bank from "../dbank.png";
+import Navbar from "../components/Navbar.js";
 import sibiToken from "../SibiToken.png";
 
 //Declare IPFS
@@ -407,9 +405,6 @@ class App extends Component {
     this.creditInterest();
     return (
       <div className="container">
-        {/* <div className="backWall" style={{ position: "absolute" }}>
-          <ParticleSettings />
-        </div> */}
         <div className="text-monospace">
           <Navbar account={this.state.account} />
           <div className="container-fluid mt-5 text-center bankContainer">

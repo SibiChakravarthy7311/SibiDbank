@@ -5,3 +5,20 @@ span{
 small{
     font-size: 16px;
 }
+
+ul{
+    display: flex;
+}
+
+.nav-item p{
+    color: aqua;
+}
+
+.nav-item p:hover{
+    text-decoration: none;
+    color: aliceblue;
+}
+
+.navbar-brand{
+    transform: translateY(-20%);
+}

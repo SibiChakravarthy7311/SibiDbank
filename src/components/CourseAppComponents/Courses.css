@@ -2,6 +2,7 @@
 .bankContainer{
     display: flex;
     justify-content: center;
+    width: 100%;
 }
 
 .mainContainer{
@@ -10,7 +11,7 @@
     border-radius: 10px;
     background-color: rgba(159, 159, 240, 0.3);
     padding: 2%;
-    min-width: 50%;
+    width: 40%;
 }
 
 .Account{
@@ -196,6 +197,6 @@ body{
     background-color: #093272;
 }
 
-
-/* Why do I baby Why do I love the way you always always leave me? Why do I baby why do I love the touch but never love the feeling? 
-Fuck!!! Back off I'll take you on, headstrong to take on anyone. I know that you are wrong, and this is not where you belong. I can't give everything away, I won't give everything away. Fuck!!! Back off I'll take you on, headstrong to take on anyone. I know that you are wrong, and this is not where you belong. I can't give everything away, I won't give everything away. Fuck!!! Back off I'll take you on, headstrong to take on anyone. I know that you are wrong, and this is not where you belong. I can't give everything away, I won't give everything away. Fuck!!! Back off I'll take you on, headstrong to take on anyone. I know that you are wrong, and this */
+.hidden{
+    display: none;
+}

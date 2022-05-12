@@ -71,37 +71,13 @@ class Main extends Component {
                   <p>{image.description}</p>
                 </li>
                 <div key={key} className="imageStatus">
-                  {/* <small className="float-left mt-1 text-muted">
-                    TOTAL DONATION:{" "}
-                    {web3.utils.fromWei(image.tipAmount.toString(), "Ether")}{" "}
-                    ETH
-                  </small> */}
                   <div className="auctionPost">
                     <small className="float-left mt-1 text-muted imageValue">
                       NFT VALUE:{" "}
-                      {/* {web3.utils.fromWei(image.tipAmount.toString(), "Ether")}{" "} */}
                       {web3.utils.fromWei(image.value.toString(), "Ether")}{" "}
                       ETH
                     </small>
                   </div>
-
-                  {/* {image.author === this.props.account ? (
-                    <button
-                      className="btn btn-link btn-sm float-right pt-0"
-                      name={image.id}
-                      onClick={(event) => {
-                        let imageValue = image.value;
-                        console.log(event.target.name, imageValue);
-                        this.props.tipImageOwner(event.target.name, image.value);
-                      }}
-                    >
-                      POST FOR SALE
-                    </button>
-                  ) : 
-                  <small className="float-right mt-1 text-muted">
-                    NOT IN SALE
-                  </small>
-                  } */}
 
                   {image.author === this.props.account ? 
                     <div>

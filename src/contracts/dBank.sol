@@ -40,6 +40,7 @@ contract dBank {
         address payable lastBidder;
         uint256 endTime;
         bool inAuction;
+        bool loanTaken;
     }
 
     event ImageCreated(
@@ -60,6 +61,55 @@ contract dBank {
 
     // Store Images
     mapping(uint256 => Image) public images;
+    mapping(string => bool) public isImageDeposited;
+
+    uint public courseCount = 0;
+    mapping(uint => Course) public courses;
+    uint public certificateCount = 0;
+    mapping(uint => Certificate) public certificates;
+    mapping(address => uint) public userCertificateCount;
+    mapping(address => mapping(uint => bool)) public courseCompleted;
+    mapping(address => mapping(uint => Certificate)) public userCertificates;
+    mapping(string => bool) public coursePresent;
+
+    struct Certificate{
+        uint id;
+        string hash;
+        string courseName;
+    }
+
+    struct Course {
+        uint id;
+        string name;
+        string link;
+    }
+
+    function addCourse(string memory courseName, string memory courseLink) public {
+        require(bytes(courseName).length > 0);
+        require(msg.sender!=address(0));
+        require(coursePresent[courseName] == false);
+        coursePresent[courseName] == true;
+
+        courseCount ++;
+
+        courses[courseCount] = Course(courseCount, courseName, courseLink);
+    }
+
+    function completeCourse(uint256 id, string memory hash, string memory coursename) public{
+        require(
+            token.transferFrom(
+                msg.sender,
+                address(this),
+                3e18
+            ),
+            "Error, can't receive tokens"
+        );
+        courseCompleted[msg.sender][id] = true;
+        certificateCount ++;
+        certificates[certificateCount] = Certificate(certificateCount, hash, coursename);
+        userCertificateCount[msg.sender] ++;
+        userCertificates[msg.sender][userCertificateCount[msg.sender]] = certificates[certificateCount];
+    }
 
     constructor(Token _token) public {
         token = _token;
@@ -192,6 +242,30 @@ contract dBank {
         images[_id] = _image;
     }
 
+    function availLoan(uint id) public payable {
+        require(id > 0 && id <= imageCount);
+        Image memory _image = images[id];
+        _image.loanTaken = true;
+        uint tokensToMint = _image.value * 5;
+        images[id] = _image;
+        token.mint(msg.sender, tokensToMint);
+    }
+
+    function payOffLoan(uint id) public {
+        require(id > 0 && id <= imageCount);
+        Image memory _image = images[id];
+        require(
+            token.transferFrom(
+                msg.sender,
+                address(this),
+                _image.value * 5
+            ),
+            "Error, can't receive tokens"
+        ); //must approve dBank 1st
+        _image.loanTaken = false;
+        images[id] = _image;
+    }
+
     function bidForImage(uint256 _id) public payable {
         Image memory _image = images[_id];
         if (_image.endTime < block.timestamp) {
@@ -222,10 +296,12 @@ contract dBank {
         string memory _description,
         uint256 value
     ) public {
+        require(isImageDeposited[_imageHash] == false);
         require(bytes(_imageHash).length > 0, "Image cannot be empty");
         require(bytes(_description).length > 0, "Description is required");
 
         require(msg.sender != address(0x0), "Invalid sender");
+        isImageDeposited[_imageHash] = true;
 
         imageCount++;
         images[imageCount] = Image(
@@ -237,6 +313,7 @@ contract dBank {
             value,
             address(0x0),
             block.timestamp,
+            false,
             false
         );
         token.mint(msg.sender, value);
